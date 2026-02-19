@@ -32,3 +32,5 @@ jobs:
         uses: ./.github/actions/hello-world-js
         with:
           name: "GitHub Actions"
+      - name: Print output from JavaScript action
+        run: echo "Output from JavaScript action: ${{ steps.hello-js.outputs.fullName }}"
