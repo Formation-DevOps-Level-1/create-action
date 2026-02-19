@@ -1,0 +1,12 @@
+name: On Push Hello Action
+on:
+  push:
+    branches: [ main ]
+jobs:
+  hello-world:
+  runs-on: ubuntu-latest
+  steps:
+    - name: Hello world action step
+      uses: ./.github/actions/hello-world-docker
+      with:
+        name: "GitHub Actions"

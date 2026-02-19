@@ -1,0 +1,14 @@
+name: Display Hello World
+description: A simple GitHub Action that prints "Hello, World!" to the console.
+inputs:
+  name:
+    description: 'The name of the person to greet'
+    required: false
+    default: 'World'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Say Hello
+      shell: bash
+      run: echo "Hello, ${{ inputs.name }}!"
