@@ -1,10 +1,10 @@
 # GitHub Action Demo (Training)
 
-This repository is a training project to learn how to build and run 3 local GitHub Actions:
+This repository is a training project to learn 3 local GitHub Action types:
 
 - Composite action
 - Docker action
-- JavaScript action with output
+- JavaScript action (with output)
 
 ## Project structure
 
@@ -21,61 +21,65 @@ This repository is a training project to learn how to build and run 3 local GitH
 │   │       ├── action.yml
 │   │       ├── index.js
 │   │       ├── package.json
+│   │       ├── package-lock.json
 │   │       └── dist/index.js
 │   └── workflows/
 │       └── ci.yml
 └── README.md
 ```
 
-## What each action does
+## Workflow trigger
 
-### 1) Composite action
+The workflow `.github/workflows/ci.yml` runs on:
 
-Location: `.github/actions/hello-world-composite/action.yml`
+- `push` on `main`
+- `workflow_dispatch` with input `name` (default: `Gildas Tema`)
 
-- Input: `name` (default: `World`)
-- Behavior: prints `Hello, <name>!`
+## Jobs in CI
 
-### 2) Docker action
+### `hello-world-composite`
 
-Location: `.github/actions/hello-world-docker/action.yml`
+- uses local action: `./.github/actions/hello-world-composite`
+- passes: `name: ${{ github.event.inputs.name || 'GitHub Actions' }}`
 
-- Input: `name` (default: `World`)
-- Dockerfile reads GitHub input env var `INPUT_NAME`
-- Behavior: prints `Hello <name>!`
+### `hello-world-docker`
 
-### 3) JavaScript action
+- uses local action: `./.github/actions/hello-world-docker`
+- passes: `name: ${{ github.event.inputs.name || 'Bryana' }}`
 
-Location: `.github/actions/hello-world-js/action.yml`
+### `hello-world-js`
 
-- Input: `name` (default: `World`)
-- Output: `fullName`
-- Behavior:
-	- prints greeting
-	- sets output using `core.setOutput('fullName', ...)`
-
-## Workflow
-
-The workflow file `.github/workflows/ci.yml` runs 3 jobs:
-
-- `hello-world-composite`
-- `hello-world-docker`
-- `hello-world-js` (depends on docker job)
-
-In the JS job, output is consumed with:
+- depends on docker job: `needs: hello-world-docker`
+- uses local action: `./.github/actions/hello-world-js`
+- step id: `hello-js`
+- prints output:
 
 ```yaml
 ${{ steps.hello-js.outputs.fullName }}
 ```
 
-## Run the workflow
+## Action summary
 
-1. Push to `main`, or
-2. Go to **Actions** tab and run manually with `workflow_dispatch`
+### Composite action
 
-## Build step for JavaScript action
+- input: `name`
+- behavior: prints hello message in a bash step
 
-If you change `.github/actions/hello-world-js/index.js`, rebuild `dist`:
+### Docker action
+
+- input: `name`
+- runtime variable inside container: `INPUT_NAME`
+- behavior: prints hello message from Docker `ENTRYPOINT`
+
+### JavaScript action
+
+- input: `name`
+- output: `fullName`
+- output is set in code with `core.setOutput('fullName', ...)`
+
+## Build JS action after code changes
+
+If you update `.github/actions/hello-world-js/index.js`, rebuild bundle:
 
 ```bash
 cd .github/actions/hello-world-js
@@ -83,28 +87,29 @@ npm install
 npm run build
 ```
 
-Then commit updated `dist/index.js` and lockfile.
+Commit these files after build:
 
-## Common errors
+- `.github/actions/hello-world-js/dist/index.js`
+- `.github/actions/hello-world-js/package-lock.json`
 
-### Error: Cannot find module '@actions/core'
+## Common issue
+
+### `Cannot find module '@actions/core'`
 
 Cause:
 
-- dependencies are not bundled for the runner
+- JS dependencies are not available on the runner at runtime.
 
 Fix:
 
-- ensure `@actions/core` is in dependencies
-- build with `ncc` (`npm run build`)
-- make sure action `main` points to `dist/index.js`
+- keep `@actions/core` in dependencies
+- bundle with `@vercel/ncc` (`npm run build`)
+- ensure JS action points to `dist/index.js`
 
-### Local action path error
+## Manual run
 
-For local actions, use:
-
-```yaml
-uses: ./.github/actions/<action-folder>
-```
-
-and keep `actions/checkout@v4` before using local paths.
+1. Open the repository on GitHub
+2. Go to **Actions**
+3. Select **On Push Hello Action**
+4. Click **Run workflow**
+5. Optionally set input `name`

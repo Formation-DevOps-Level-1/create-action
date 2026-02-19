@@ -3,7 +3,12 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
-    
+    inputs:
+      name:
+        description: 'The name of person to greet'
+        required: false
+        default: 'Gildas Tema'
+
 jobs:
   hello-world-composite:
     runs-on: ubuntu-latest
@@ -12,7 +17,7 @@ jobs:
       - name: Hello world action step
         uses: ./.github/actions/hello-world-composite
         with:
-          name: "GitHub Actions"
+          name: ${{ github.event.inputs.name || 'GitHub Actions' }} # Use input from workflow_dispatch or default
 
   hello-world-docker:
     runs-on: ubuntu-latest
@@ -21,7 +26,7 @@ jobs:
       - name: Hello world Docker action step
         uses: ./.github/actions/hello-world-docker
         with:
-          name: "Bryana"
+          name: ${{ github.event.inputs.name || 'Bryana' }} # Use input from workflow_dispatch or default
 
 
   hello-world-js:
@@ -33,6 +38,6 @@ jobs:
         id: hello-js # Set an ID to reference outputs
         uses: ./.github/actions/hello-world-js
         with:
-          name: "GitHub Actions"
+          name: ${{ github.event.inputs.name || 'GitHub Actions' }} # Use input from workflow_dispatch or default
       - name: Print output from JavaScript action
         run: echo "${{ steps.hello-js.outputs.fullName }}"
