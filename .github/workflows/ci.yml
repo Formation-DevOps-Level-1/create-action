@@ -33,4 +33,4 @@ jobs:
         with:
           name: "GitHub Actions"
       - name: Print output from JavaScript action
-        run: echo "Output from JavaScript action: ${{ steps.hello-js.outputs.fullName }}"
+        run: echo "${{ steps.hello-js.outputs.fullName }}"
