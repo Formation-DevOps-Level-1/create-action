@@ -5,7 +5,7 @@ async function run() {
     try {
         const nameToGreet = core.getInput('name');
         console.log(`Hello ${nameToGreet}!`);
-        github.output('fullName', `Hello ${nameToGreet}!`);
+        core.setOutput('fullName', `Hello ${nameToGreet}!`);
     } catch (error) {
         core.setFailed(error.message);
     }
