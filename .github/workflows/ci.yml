@@ -21,3 +21,14 @@ jobs:
         with:
           name: "Bryana"
 
+
+  hello-world-js:
+    runs-on: ubuntu-latest  
+    needs: hello-world-docker # Ensure this job runs after the Docker job
+    steps:
+      - uses: actions/checkout@v4
+      - name: Hello world JavaScript action step
+        id: hello-js # Set an ID to reference outputs
+        uses: ./.github/actions/hello-world-js
+        with:
+          name: "GitHub Actions"
