@@ -8,6 +8,8 @@ on:
         description: 'The name of person to greet'
         required: false
         default: 'Gildas Tema'
+  repository_dispatch:
+    types: [hello.v1]
 
 jobs:
   hello-world-composite:

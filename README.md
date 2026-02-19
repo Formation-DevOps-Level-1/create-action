@@ -34,6 +34,36 @@ The workflow `.github/workflows/ci.yml` runs on:
 
 - `push` on `main`
 - `workflow_dispatch` with input `name` (default: `Gildas Tema`)
+- `repository_dispatch` with type `hello.v1`
+
+## repository_dispatch (internal events)
+
+Use `repository_dispatch` to trigger this workflow from internal systems or another workflow.
+
+Current accepted type in this project:
+
+- `hello.v1`
+
+Recommended event naming pattern for internal usage:
+
+- `internal.<domain>.<action>.v<version>`
+- example: `internal.user.created.v1`
+
+API call example:
+
+```bash
+curl -L -X POST \
+	-H "Accept: application/vnd.github+json" \
+	-H "Authorization: Bearer <TOKEN>" \
+	https://api.github.com/repos/<owner>/<repo>/dispatches \
+	-d '{"event_type":"hello.v1","client_payload":{"name":"Gildas Tema"}}'
+```
+
+Notes:
+
+- `event_type` maps to `on.repository_dispatch.types`
+- custom data is sent in `client_payload`
+- in workflow, read payload via `${{ github.event.client_payload.<key> }}`
 
 ## Jobs in CI
 
