@@ -3,7 +3,7 @@ on:
   push:
     branches: [ main ]
 jobs:
-  hello-world:
+  hello-world-composite:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -11,3 +11,13 @@ jobs:
         uses: ./.github/actions/hello-world-composite
         with:
           name: "GitHub Actions"
+
+  hello-world-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Hello world Docker action step
+        uses: ./.github/actions/hello-world-docker
+        with:
+          name: "Bryana"
+

@@ -1,0 +1,11 @@
+name: Action Hello World Docker
+description: A simple GitHub Action that prints "Hello, World!" using Docker.
+inputs:
+  name:
+    description: 'The name of person to greet'
+    required: false
+    default: 'World'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
